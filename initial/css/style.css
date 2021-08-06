@@ -1,0 +1,10 @@
+#updater{
+display: flex;
+justify-content: space-between;
+}
+canvas{
+    display: block;
+    margin:0px auto;
+    /* width: 70% */
+    /* height: 54vh; */
+}
