@@ -1,78 +1,59 @@
-const path = require("path");
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
-const HTMLWebpackPlugin = require("html-webpack-plugin");
-// const ESLintPlugin = require("eslint-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-const webpack = require("webpack");
-module.exports = {
-    entry: "./src/index.ts",
-    output: {
-        path: path.join(__dirname, "dist"),
-        filename: "[name].[fullhash].js"
+const path=require('path');
+// const {CleanWebpackPlugin}=require('clean-webpack-plugin');
+const htmlplugin=require("html-webpack-plugin");
+const copyplugin=require("copy-webpack-plugin");
+const webpack=require("webpack");
+
+module.exports={
+    entry:'./initial/src/main.ts',
+    output:{
+        filename:"result.js",
+        path:path.resolve(__dirname,'final')
+    },
+    devServer:{
+        contentBase:path.join(__dirname,'final'),
+        port:8080,
+        open:true
     },
     mode:"development",
-    resolve: {
-        extensions: ['.ts','.js']
+    resolve:{
+        extensions:['.js','.ts']
     },
-    // optimization: {
-    //     minimize: true
-    // },
-    module: {
-        rules:[
-            {
-                test: /\.ts$/i,
-                use: "ts-loader",
-                exclude: /node_modules/
-            },
-            {
+    module:{
+        rules:[{
+            test:/\.ts$/i,
+            use:"ts-loader",
+            // exclude:/node_modules/
+        },
+        {
+            test:/\.css$/i,
+            use:['style-loader','css-loader']
+        },
+        {
                 test: /\.(webp|png|jpe?g|gif|svg|mp3|ogg|mp4|weba|woff2?|eot|ttf|otf)$/,
                 loader: "file-loader",
                 options:{
-                    name:'[path][name].[ext]',
-                    context: 'public'
+                    name:'[name].[ext]',
+                    outputPath:"./assets/images/",
+                    // publicPath:"./srcimages/",
+                    userRelativePaths:true
                 }
             },
-            {
-                test: /\.scss$/i,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    {
-                        loader:'sass-loader',
-                        options: {
-                            implementation: require('sass')
-                        }
-                    }
-                ]
-            }
-        ]
+    ]
     },
-    plugins: [
-        new CleanWebpackPlugin(),
-        new HTMLWebpackPlugin({
-            title: "PIXI Training",
-            inject: "body",
-            meta:{
-                'viewport': 'width=device-width, initial-scale=1, shrink-to-fit=no',
-            }
+    plugins:
+        [new htmlplugin({
+            title:'PIXI',
+            template:'index.html',
+            filename:'index.html',
+            inject:'body'
         }),
-        new CopyPlugin({
+        new copyplugin({
             patterns: [{
-                from: './src/assets/',
-                to: './assets'
-            }]
-        }),
-        new webpack.ProgressPlugin(),
-    ],
-    // devtool: 'source-map',
-    devServer: {
-        open:true,
-        disableHostCheck:true,
-        port: 8080,
-        headers: {
-            'Access-Control-Allow-Origin':'*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-            'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization'
-        }
-    }
+            from: './initial/assets/',
+            to: './assets'
+        }]}),
+        // new CleanWebpackPlugin()
+        new webpack.ProgressPlugin()
+    ]
 }
